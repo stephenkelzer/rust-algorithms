@@ -1,15 +1,37 @@
 use std::collections::HashSet;
 
-struct Game {
+pub struct JumpGame {
+    /// The board of the game.
     board: Vec<usize>,
+
+    /// The starting position of the game.
     starting_index: usize,
 }
 
-impl Game {
+impl JumpGame {
+    /// # Creates a new JumpGame with the given board and starting position.
+    ///
+    /// ## Example
     /// ```
+    /// # use rust_algorithms::jump_game::JumpGame;
     /// let board = vec![1, 2, 3, 0, 3, 2];
     /// let starting_index = 0;
-    /// jump_game::Game::new(board, starting_index);
+    /// JumpGame::new(board, starting_index);
+    /// ```
+    /// ```should_panic
+    /// # use rust_algorithms::jump_game::JumpGame;
+    /// // The board must have at least one element
+    /// JumpGame::new(vec![], 0);
+    /// ```
+    /// ```should_panic
+    /// # use rust_algorithms::jump_game::JumpGame;
+    /// // The starting index cannot be out of bounds
+    /// JumpGame::new(vec![1,0], 3);
+    /// ```
+    /// ```should_panic
+    /// # use rust_algorithms::jump_game::JumpGame;
+    /// // The board must contain at least one 0
+    /// JumpGame::new(vec![1,2,3], 0);
     /// ```
     pub fn new(board: Vec<usize>, starting_index: usize) -> Self {
         if board.len() == 0 {
@@ -27,7 +49,24 @@ impl Game {
         }
     }
 
-    pub fn check_if_winnable(&self) -> bool {
+    /// # Checks to see if the JumpGame is winnable.
+    ///
+    /// ## Examples
+    /// ```
+    /// # use rust_algorithms::jump_game::JumpGame;
+    /// let board = vec![1, 2, 3, 0, 3, 2];
+    /// let starting_index = 0;
+    /// let game = JumpGame::new(board, starting_index);
+    /// assert!(game.is_winnable());
+    /// ```
+    /// ```
+    /// # use rust_algorithms::jump_game::JumpGame;
+    /// let board = vec![1, 2, 0, 3, 2];
+    /// let starting_index = 0;
+    /// let game = JumpGame::new(board, starting_index);
+    /// assert!(!game.is_winnable());
+    /// ```
+    pub fn is_winnable(&self) -> bool {
         let mut stack = Vec::<isize>::new();
         let mut visited = HashSet::<isize>::new();
 
@@ -72,30 +111,9 @@ mod tests {
     use test_case::test_case;
 
     #[test]
-    #[should_panic]
-    fn game_board_cannot_be_empty() {
-        std::panic::set_hook(Box::new(|_| {}));
-        Game::new(vec![], 0);
-    }
-
-    #[test]
-    #[should_panic]
-    fn game_board_must_have_a_0_present() {
-        std::panic::set_hook(Box::new(|_| {}));
-        Game::new(vec![1], 0);
-    }
-
-    #[test]
-    #[should_panic]
-    fn starting_position_must_not_be_out_of_bounds() {
-        std::panic::set_hook(Box::new(|_| {}));
-        Game::new(vec![1], 2);
-    }
-
-    #[test]
     fn handles_a_cyclical_board_without_panicking() {
-        let game = Game::new(vec![1, 1, 1, 1, 0], 0);
-        assert!(game.check_if_winnable());
+        let game = JumpGame::new(vec![1, 1, 1, 1, 0], 0);
+        assert!(game.is_winnable());
     }
 
     #[test_case(vec![1, 2, 3, 0, 3, 2], 0, true)]
@@ -118,7 +136,7 @@ mod tests {
     #[test_case(vec![1, 1, 6, 0, 2, 2, 2], 5, true)]
     #[test_case(vec![1, 1, 6, 0, 2, 2, 2], 6, false)]
     fn test_cases(board: Vec<usize>, starting_index: usize, expected: bool) {
-        let game = Game::new(board, starting_index);
-        assert_eq!(game.check_if_winnable(), expected);
+        let game = JumpGame::new(board, starting_index);
+        assert_eq!(game.is_winnable(), expected);
     }
 }
