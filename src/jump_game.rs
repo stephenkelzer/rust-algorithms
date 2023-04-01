@@ -1,10 +1,7 @@
 use std::collections::HashSet;
 
 pub struct JumpGame {
-    /// The board of the game.
     board: Vec<usize>,
-
-    /// The starting position of the game.
     starting_index: usize,
 }
 
